@@ -1,28 +1,11 @@
 import React from 'react';
 import { Truck, Shield, RotateCcw } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import AddToCartButton from '../components/AddToCartButton';
+import { products } from '../data/products';
 
 const Home = () => {
-  const featuredProducts = [
-    {
-      id: 'sprint-elite-x',
-      name: "Sprint Elite X",
-      price: "$129.99",
-      image: "https://images.unsplash.com/photo-1539185441755-769473a23570"
-    },
-    {
-      id: 'air-comfort-pro',
-      name: "Air Comfort Pro",
-      price: "$159.99",
-      image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2"
-    },
-    {
-      id: 'trail-blazer',
-      name: "Trail Blazer",
-      price: "$189.99",
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff"
-    }
-  ];
+  const featuredProducts = products.slice(0, 3);
 
   return (
     <>
@@ -37,7 +20,7 @@ const Home = () => {
           <div className="text-center text-white">
             <h1 className="text-6xl font-bold mb-4">Faster Shoes</h1>
             <p className="text-xl mb-8">Run Faster. Dream Bigger.</p>
-            <a href="#mens" className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition inline-block">
+            <a href="#featured" className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition inline-block">
               Shop Now
             </a>
           </div>
@@ -72,15 +55,19 @@ const Home = () => {
       </div>
 
       {/* Featured Products */}
-      <div className="bg-gray-50 py-16">
+      <div id="featured" className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProducts.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <img src={product.image} alt={product.name} className="w-full h-64 object-cover" />
+                <Link to={`/product/${product.id}`}>
+                  <img src={product.image} alt={product.name} className="w-full h-64 object-cover" />
+                </Link>
                 <div className="p-4">
-                  <h3 className="font-semibold text-lg">{product.name}</h3>
+                  <Link to={`/product/${product.id}`}>
+                    <h3 className="font-semibold text-lg hover:text-blue-600 transition">{product.name}</h3>
+                  </Link>
                   <p className="text-gray-600">{product.price}</p>
                   <AddToCartButton product={product} />
                 </div>

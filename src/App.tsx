@@ -8,6 +8,7 @@ import Womens from './pages/Womens';
 import Sale from './pages/Sale';
 import CartPage from './pages/CartPage';
 import CheckoutSuccess from './pages/CheckoutSuccess';
+import ProductPage from './pages/ProductPage';
 import { CartProvider } from './context/CartContext';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
               <Route path="/sale" element={<Sale />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
+              <Route path="/product/:productId" element={<ProductPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
