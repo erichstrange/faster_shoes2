@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -12,7 +12,7 @@ import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/erich">
       <CartProvider>
         <div className="min-h-screen bg-gray-50 flex flex-col">
           <Navbar />
@@ -24,6 +24,7 @@ function App() {
               <Route path="/sale" element={<Sale />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           <Footer />
