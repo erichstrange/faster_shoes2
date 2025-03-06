@@ -1,17 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Plus, Minus, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, cartTotal, itemCount, processCheckout } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // 1. On load, capture ?irclickid= param and store it in localStorage if present
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cid = params.get('irclickid');
+    if (cid) {
+      localStorage.setItem('irclickid', cid);
+    }
+  }, [location.search]);
+
+  // 2. Proceed to checkout, appending ?irclickid= from localStorage to the URL
   const handleCheckout = () => {
+    // This is your existing function that processes the order
     processCheckout();
-    navigate('/checkout/success');
+
+    // Retrieve clickID from localStorage
+    const storedClickId = localStorage.getItem('irclickid') || '';
+
+    // Navigate to success page, passing it along as a query param
+    navigate(`/checkout/success?irclickid=${storedClickId}`);
   };
 
+  // If cart is empty, render a placeholder
   if (cart.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -27,10 +45,11 @@ const CartPage = () => {
     );
   }
 
+  // Otherwise, render the cart items
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Shopping Cart ({itemCount} items)</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="space-y-4">

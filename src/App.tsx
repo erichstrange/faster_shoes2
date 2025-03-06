@@ -24,7 +24,7 @@ function App() {
               <Route path="/womens" element={<Womens />} />
               <Route path="/sale" element={<Sale />} />
               <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout/success" element={<CheckoutSuccess />} />
+              <Route path="/checkoutSuccess" element={<CheckoutSuccess />} />
               <Route path="/product/:productId" element={<ProductPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

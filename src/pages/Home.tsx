@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Truck, Shield, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AddToCartButton from '../components/AddToCartButton';
@@ -7,11 +7,29 @@ import { products } from '../data/products';
 const Home = () => {
   const featuredProducts = products.slice(0, 3);
 
+  // NEW: UseEffect to push data to dataLayer
+  useEffect(() => {
+    window.dataLayer = window.dataLayer || [];
+
+    // UTT Landing Page event
+    window.dataLayer.push({
+      event: 'UTT_LandingPageView',
+      page: 'HomePage',
+    });
+
+    // Identity event (with empty strings)
+    window.dataLayer.push({
+      event: 'identity',
+      customerID: '',
+      customerEmail: '',
+    });
+  }, []);
+
   return (
     <>
       {/* Hero Section */}
       <div className="relative h-[600px]">
-        <img 
+        <img
           src="https://images.unsplash.com/photo-1542291026-7eec264c27ff"
           alt="Hero"
           className="w-full h-full object-cover"
@@ -75,6 +93,16 @@ const Home = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* NEW: Test link to your Checkout Success page with a sample irclickid */}
+      <div className="text-center my-8">
+        <Link
+          to="/checkoutSuccess?irclickid=test123"
+          className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition"
+        >
+          Test Conversion with irclickid
+        </Link>
       </div>
     </>
   );

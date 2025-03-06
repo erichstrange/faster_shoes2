@@ -1,9 +1,41 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Check } from 'lucide-react';
 
 const CheckoutSuccess = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.dataLayer = window.dataLayer || [];
+
+    // 1) Fire a UTT conversion page event (optional)
+    window.dataLayer.push({
+      event: 'UTT_ConversionPageView',
+      page: 'CheckoutSuccess',
+    });
+
+    // 2) Grab ?irclickid= from the query string or localStorage as a fallback
+    const searchParams = new URLSearchParams(location.search);
+    let irclickid = searchParams.get('irclickid') || '';
+    if (!irclickid) {
+      // If there's no param, try localStorage
+      irclickid = localStorage.getItem('irclickid') || '';
+    }
+
+    // 3) Push impactConversion event with the ID
+    window.dataLayer.push({
+      event: 'impactConversion',
+      orderId: irclickid || '',
+      clickId: irclickid || '',
+      totalValue: '100.00', // Hardcode or use real order data
+      currency: 'USD',
+    });
+
+    // Optionally log to see if it worked
+    console.log("impactConversion event fired with ID:", irclickid);
+
+  }, [location.search]);
 
   return (
     <div className="container mx-auto px-4 py-16 text-center">
