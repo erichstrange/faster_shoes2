@@ -1,3 +1,7 @@
+/**
+ * File Name: CartPage.tsx
+ * Full Path: /Users/mac/WebstormProjects/faster_shoes2/src/pages/CartPage.tsx
+ */
 import React from 'react';
 import { X, Plus, Minus, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -15,11 +19,10 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    // If you want to "process checkout" here, that's fine,
-    // but typically you'd do the final process in your CheckoutPage.
-    processCheckout();
+    // DO NOT call processCheckout() here—only do that in CheckoutPage
+    // processCheckout();
 
-    // Now go to the /checkout route
+    // Go to /checkout
     navigate('/checkout');
   };
 
@@ -27,9 +30,7 @@ const CartPage = () => {
     return (
         <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="text-3xl font-bold mb-8">Your Cart is Empty</h1>
-          <p className="text-gray-600 mb-8">
-            Add some items to your cart to get started!
-          </p>
+          <p className="text-gray-600 mb-8">Add some items to your cart to get started!</p>
           <button
               onClick={() => navigate('/')}
               className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition"
@@ -50,15 +51,8 @@ const CartPage = () => {
           <div className="lg:col-span-2">
             <div className="space-y-4">
               {cart.map((item) => (
-                  <div
-                      key={item.id}
-                      className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow"
-                  >
-                    <img
-                        src={item.image}
-                        alt={item.name}
-                        className="h-24 w-24 object-cover rounded"
-                    />
+                  <div key={item.id} className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow">
+                    <img src={item.image} alt={item.name} className="h-24 w-24 object-cover rounded" />
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg">{item.name}</h3>
                       <p className="text-gray-600">{item.price}</p>

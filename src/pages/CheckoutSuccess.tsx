@@ -1,3 +1,7 @@
+/**
+ * File Name: CheckoutSuccess.tsx
+ * Full Path: /Users/mac/WebstormProjects/faster_shoes2/src/pages/CheckoutSuccess.tsx
+ */
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Check } from 'lucide-react';
@@ -22,12 +26,12 @@ const CheckoutSuccess = () => {
             irclickid = localStorage.getItem('irclickid') || '';
         }
 
-        // 3) Impact conversion
+        // 3) impactConversion
         window.dataLayer.push({
             event: 'impactConversion',
             orderId: irclickid || '',
             clickId: irclickid || '',
-            totalValue: '100.00',
+            totalValue: '100.00', // Hardcode or dynamic
             currency: 'USD',
         });
 
@@ -41,8 +45,7 @@ const CheckoutSuccess = () => {
             </div>
             <h1 className="text-3xl font-bold mb-4">Order Confirmed!</h1>
             <p className="text-gray-600 mb-8">
-                Thank you for your purchase. We'll send you an email with your order
-                details shortly.
+                Thank you for your purchase. We'll send you an email with your order details shortly.
             </p>
             <button
                 onClick={() => navigate('/')}
