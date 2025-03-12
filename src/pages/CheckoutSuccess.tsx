@@ -1,7 +1,3 @@
-/**
- * File Name: CheckoutSuccess.tsx
- * Full Path: /Users/mac/WebstormProjects/faster_shoes2/src/pages/CheckoutSuccess.tsx
- */
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Check } from 'lucide-react';
@@ -19,23 +15,46 @@ const CheckoutSuccess = () => {
             page: 'CheckoutSuccess',
         });
 
-        // 2) Try ?irclickid= in the URL, else localStorage
+        // 2) Grab ?irclickid= from the URL or localStorage
         const searchParams = new URLSearchParams(location.search);
         let irclickid = searchParams.get('irclickid') || '';
         if (!irclickid) {
             irclickid = localStorage.getItem('irclickid') || '';
         }
 
-        // 3) impactConversion
+        // 3) Also retrieve the real orderId and totalValue from localStorage
+        const storedSummary = localStorage.getItem('orderSummary');
+        let realOrderId = 'test-order';
+        let realTotalValue = '0.00';
+
+        if (storedSummary) {
+            try {
+                const parsed = JSON.parse(storedSummary);
+                if (parsed.orderId) {
+                    realOrderId = parsed.orderId; // e.g. "wg4nbvj9t"
+                }
+                if (typeof parsed.total === 'number') {
+                    realTotalValue = parsed.total.toFixed(2); // e.g. "159.99"
+                }
+            } catch (err) {
+                console.error('Failed to parse storedSummary:', err);
+            }
+        }
+
+        // 4) Push impactConversion with the real order ID and total
         window.dataLayer.push({
             event: 'impactConversion',
-            orderId: irclickid || '',
-            clickId: irclickid || '',
-            totalValue: '100.00', // Hardcode or dynamic
+            orderId: realOrderId,
+            clickId: irclickid,     // from URL or localStorage
+            totalValue: realTotalValue,
             currency: 'USD',
         });
 
         console.log('impactConversion event fired with ID:', irclickid);
+        console.log('impactConversion orderId, totalValue:', realOrderId, realTotalValue);
+
+        // Optionally clear that storedSummary if you don't want it to persist
+        localStorage.removeItem('orderSummary');
     }, [location.search]);
 
     return (

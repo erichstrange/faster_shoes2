@@ -1,7 +1,3 @@
-/**
- * File Name: CheckoutPage.tsx
- * Full Path: /Users/mac/WebstormProjects/faster_shoes2/src/pages/CheckoutPage.tsx
- */
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +39,14 @@ const CheckoutPage = () => {
     try {
       // Simulate some processing time
       await new Promise(resolve => setTimeout(resolve, 1500));
-      processCheckout(); // logs order, clears cart
+
+      // 1) Actually process checkout, get the real order data
+      const orderSummary = processCheckout(); // logs order, clears cart
+
+      // 2) Store the orderSummary in localStorage so we can read it on success page
+      localStorage.setItem('orderSummary', JSON.stringify(orderSummary));
+
+      // 3) Navigate to success
       navigate('/checkoutSuccess');
     } catch (error) {
       console.error('Checkout failed:', error);
