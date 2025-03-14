@@ -9,20 +9,21 @@ const CheckoutSuccess = () => {
     useEffect(() => {
         window.dataLayer = window.dataLayer || [];
 
-        // 1) UTT_ConversionPageView
+        // Optional: Fire a "UTT_ConversionPageView" event if needed
+        // (Not mandatory for Impact conversion, can remove if you want)
         window.dataLayer.push({
             event: 'UTT_ConversionPageView',
             page: 'CheckoutSuccess',
         });
 
-        // 2) Grab ?irclickid= from the URL or localStorage
+        // 1) Gather the clickId (if any) from ?irclickid= or localStorage
         const searchParams = new URLSearchParams(location.search);
         let irclickid = searchParams.get('irclickid') || '';
         if (!irclickid) {
             irclickid = localStorage.getItem('irclickid') || '';
         }
 
-        // 3) Also retrieve the real orderId and totalValue from localStorage
+        // 2) Retrieve the real order data from localStorage
         const storedSummary = localStorage.getItem('orderSummary');
         let realOrderId = 'test-order';
         let realTotalValue = '0.00';
@@ -31,30 +32,30 @@ const CheckoutSuccess = () => {
             try {
                 const parsed = JSON.parse(storedSummary);
                 if (parsed.orderId) {
-                    realOrderId = parsed.orderId; // e.g. "wg4nbvj9t"
+                    realOrderId = parsed.orderId;    // e.g. "000nfderx"
                 }
                 if (typeof parsed.total === 'number') {
-                    realTotalValue = parsed.total.toFixed(2); // e.g. "159.99"
+                    realTotalValue = parsed.total.toFixed(2); // e.g. "129.99"
                 }
             } catch (err) {
                 console.error('Failed to parse storedSummary:', err);
             }
         }
 
-        // 4) Push impactConversion with the real order ID and total
+        // 3) Push a single impactConversion event with your real total
+        console.log(
+            'impactConversion orderId, totalValue:',
+            realOrderId,
+            realTotalValue
+        );
+
         window.dataLayer.push({
             event: 'impactConversion',
-            orderId: realOrderId,
-            clickId: irclickid,
-            totalValue: realTotalValue,
+            orderId: realOrderId,       // e.g. "000nfderx"
+            clickId: irclickid,         // e.g. "abc123" (fake) or real affiliate ID
+            totalValue: realTotalValue, // e.g. "129.99"
             currency: 'USD',
         });
-
-        console.log('impactConversion event fired with ID:', irclickid);
-        console.log('impactConversion orderId, totalValue:', realOrderId, realTotalValue);
-
-        // Optionally clear that storedSummary if you don't want it to persist
-        localStorage.removeItem('orderSummary');
     }, [location.search]);
 
     return (
