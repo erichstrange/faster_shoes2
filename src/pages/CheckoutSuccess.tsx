@@ -45,7 +45,7 @@ const CheckoutSuccess = () => {
         window.dataLayer.push({
             event: 'impactConversion',
             orderId: realOrderId,
-            clickId: irclickid,     // from URL or localStorage
+            clickId: irclickid,
             totalValue: realTotalValue,
             currency: 'USD',
         });

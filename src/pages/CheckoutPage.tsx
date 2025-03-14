@@ -6,7 +6,7 @@ const CheckoutPage = () => {
   const { cart, cartTotal, processCheckout } = useCart();
   const navigate = useNavigate();
 
-  // TOGGLE THIS to skip or require the form
+  // Toggle this to skip or require the form
   const SKIP_FORM = true;  // set to false if you want the user to fill out the form
 
   const [isProcessing, setIsProcessing] = useState(false);
