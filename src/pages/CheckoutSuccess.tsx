@@ -7,23 +7,23 @@ const CheckoutSuccess = () => {
     const location = useLocation();
 
     useEffect(() => {
+        // Ensure dataLayer is defined
         window.dataLayer = window.dataLayer || [];
 
-        // Optional: Fire a "UTT_ConversionPageView" event if needed
-        // (Not mandatory for Impact conversion, can remove if you want)
+        // Optional: Fire a separate event for page-view (not required for Impact)
         window.dataLayer.push({
             event: 'UTT_ConversionPageView',
             page: 'CheckoutSuccess',
         });
 
-        // 1) Gather the clickId (if any) from ?irclickid= or localStorage
+        // 1) Read ?irclickid= or localStorage
         const searchParams = new URLSearchParams(location.search);
         let irclickid = searchParams.get('irclickid') || '';
         if (!irclickid) {
             irclickid = localStorage.getItem('irclickid') || '';
         }
 
-        // 2) Retrieve the real order data from localStorage
+        // 2) Retrieve real order data from localStorage
         const storedSummary = localStorage.getItem('orderSummary');
         let realOrderId = 'test-order';
         let realTotalValue = '0.00';
@@ -32,7 +32,7 @@ const CheckoutSuccess = () => {
             try {
                 const parsed = JSON.parse(storedSummary);
                 if (parsed.orderId) {
-                    realOrderId = parsed.orderId;    // e.g. "000nfderx"
+                    realOrderId = parsed.orderId; // e.g. "yg8ty279p"
                 }
                 if (typeof parsed.total === 'number') {
                     realTotalValue = parsed.total.toFixed(2); // e.g. "129.99"
@@ -42,20 +42,22 @@ const CheckoutSuccess = () => {
             }
         }
 
-        // 3) Push a single impactConversion event with your real total
-        console.log(
-            'impactConversion orderId, totalValue:',
-            realOrderId,
-            realTotalValue
-        );
-
-        window.dataLayer.push({
+        // 3) Build the final object for the data layer push
+        const finalObj = {
             event: 'impactConversion',
-            orderId: realOrderId,       // e.g. "000nfderx"
-            clickId: irclickid,         // e.g. "abc123" (fake) or real affiliate ID
-            totalValue: realTotalValue, // e.g. "129.99"
+            orderId: realOrderId,
+            clickId: irclickid,
+            totalValue: realTotalValue,
             currency: 'USD',
-        });
+        };
+
+        // Log exactly what you're about to push
+        console.log('impactConversion orderId, totalValue:', realOrderId, realTotalValue);
+        console.log('>>> Actually pushing to dataLayer:', finalObj);
+
+        // 4) Push impactConversion event
+        window.dataLayer.push(finalObj);
+
     }, [location.search]);
 
     return (
