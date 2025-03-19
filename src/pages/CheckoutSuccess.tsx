@@ -15,14 +15,14 @@ const CheckoutSuccess = () => {
         // Ensure the dataLayer array
         window.dataLayer = window.dataLayer || [];
 
-        // For demonstration, read ?irclickid= or else from localStorage
+        // 1) Try to get clickId from query param or localStorage
         const searchParams = new URLSearchParams(location.search);
         let irclickid = searchParams.get('irclickid') || '';
         if (!irclickid) {
             irclickid = localStorage.getItem('irclickid') || '';
         }
 
-        // Retrieve real order data from localStorage
+        // 2) Retrieve the order data from localStorage
         const storedSummary = localStorage.getItem('orderSummary');
         let realOrderId = 'test-order';
         let realTotalValue = '0.00';
@@ -31,28 +31,29 @@ const CheckoutSuccess = () => {
             try {
                 const parsed = JSON.parse(storedSummary);
                 if (parsed.orderId) {
-                    realOrderId = parsed.orderId; // e.g. "yg8ty279p"
+                    realOrderId = parsed.orderId;
                 }
                 if (typeof parsed.total === 'number') {
-                    realTotalValue = parsed.total.toFixed(2); // e.g. "129.99"
+                    realTotalValue = parsed.total.toFixed(2);
                 }
             } catch (err) {
                 console.error('Failed to parse storedSummary:', err);
             }
         }
 
-        // Retrieve the customerId from localStorage
+        // 3) Retrieve the customerId from localStorage
         const realCustomerId = localStorage.getItem('customerId') || '';
 
-        // Fire the parent (primary) conversion event
+        // 4) Fire the parent (primary) event
         const parentObj = {
-            event: 'impactConversion',    // you can keep or rename
-            orderId: realOrderId,         // parent's order ID
-            clickId: irclickid,           // so partner credit is via click if found
+            event: 'impactConversion',
+            // "orderId" is the property your existing DLV - orderId listens for
+            orderId: realOrderId,
+            clickId: irclickid,
             totalValue: realTotalValue,
             currency: 'USD',
 
-            // Include the same customerid that was stored
+            // Include the same customerid so it’s passed
             customerid: realCustomerId,
         };
 
@@ -61,9 +62,9 @@ const CheckoutSuccess = () => {
 
     }, [location.search]);
 
-    // Handler to fire the "child" event
-    // This child event uses the parent’s orderId or the same customerid to link
+    // Handler to fire the CHILD event
     const handleChildEvent = () => {
+        // Retrieve the same order ID and customer ID
         const realCustomerId = localStorage.getItem('customerId') || '';
         const storedSummary = localStorage.getItem('orderSummary');
         let realOrderId = 'test-order';
@@ -79,17 +80,19 @@ const CheckoutSuccess = () => {
             }
         }
 
-        // Example child event. Adjust keys to match your Impact child event config.
+        // reuse "orderId" so  existing GTM DLV - orderId variable can grab it
         const childObj = {
             event: 'impactConversionChild',
-            parentOrderId: realOrderId,  // or "parentTransactionId" if your child event expects that
-            totalValue: '0.00',          // or some child revenue
+
+            // CHANGED: now "orderId" instead of "parentOrderId"
+            orderId: realOrderId,
+
+            // reuse totalValue or pass "0.00" if it’s an upsell at no additional cost
+            totalValue: '0.00',
             currency: 'USD',
 
-            // The same customerid to ensure linking
+            // Keep the same customerid
             customerid: realCustomerId,
-
-            // Notice we do NOT pass a new clickId, so it doesn't override
         };
 
         console.log('Pushing child event to dataLayer:', childObj);
@@ -115,7 +118,7 @@ const CheckoutSuccess = () => {
                     Continue Shopping
                 </button>
 
-                {/* ADDED: Button to fire the child event */}
+                {/* Button that fires the child event */}
                 <button
                     onClick={handleChildEvent}
                     className="bg-green-600 text-white px-8 py-3 rounded-md hover:bg-green-700 transition"
