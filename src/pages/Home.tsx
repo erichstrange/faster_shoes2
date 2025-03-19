@@ -13,7 +13,7 @@ const Home = () => {
   const featuredProducts = products.slice(0, 3);
 
   useEffect(() => {
-    // We still use dataLayer for any page-level events
+    // Ensure dataLayer array
     window.dataLayer = window.dataLayer || [];
 
     // Fire a "UTT_LandingPageView" for analytics
@@ -22,7 +22,7 @@ const Home = () => {
       page: 'HomePage',
     });
 
-    // Possibly push an "identity" event (if desired)
+    // Optionally push an "identity" event
     window.dataLayer.push({
       event: 'identity',
       customerID: '',

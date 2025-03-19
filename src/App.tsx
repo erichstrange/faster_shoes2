@@ -29,7 +29,6 @@ function App() {
                 <div className="min-h-screen bg-gray-50 flex flex-col">
                     <Navbar />
                     <main className="flex-grow">
-                        <SetCustomerIdOnce />
                         <AppRoutes />
                     </main>
                     <Footer />
@@ -40,24 +39,6 @@ function App() {
 }
 
 export default App;
-
-/**
- * SetCustomerIdOnce:
- * A small component to ensure we always have a real 'customerId' in localStorage,
- * even if user never visits Home page.
- */
-function SetCustomerIdOnce() {
-    useEffect(() => {
-        const existingID = localStorage.getItem('customerId');
-        if (!existingID) {
-            const newID = 'cust-' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('customerId', newID);
-            console.log('Set new customerId:', newID);
-        }
-    }, []);
-
-    return null;
-}
 
 function AppRoutes() {
     const location = useLocation();
