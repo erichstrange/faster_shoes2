@@ -29,6 +29,7 @@ function App() {
                 <div className="min-h-screen bg-gray-50 flex flex-col">
                     <Navbar />
                     <main className="flex-grow">
+                        <SetCustomerIdOnce />
                         <AppRoutes />
                     </main>
                     <Footer />
@@ -39,6 +40,24 @@ function App() {
 }
 
 export default App;
+
+/**
+ * SetCustomerIdOnce:
+ * A small component to ensure we always have a real 'customerId' in localStorage,
+ * even if user never visits Home page.
+ */
+function SetCustomerIdOnce() {
+    useEffect(() => {
+        const existingID = localStorage.getItem('customerId');
+        if (!existingID) {
+            const newID = 'cust-' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('customerId', newID);
+            console.log('Set new customerId:', newID);
+        }
+    }, []);
+
+    return null;
+}
 
 function AppRoutes() {
     const location = useLocation();
@@ -66,6 +85,3 @@ function AppRoutes() {
         </Routes>
     );
 }
-
-
-// <script type="text/javascript"> (function(a,b,c,d,e,f,g){e['ire_o']=c;e[c]=e[c]||function(){(e[c].a=e[c].a||[]).push(arguments)};f=d.createElement(b);g=d.getElementsByTagName(b)[0];f.async=1;f.src=a;g.parentNode.insertBefore(f,g);})('https://utt.impactcdn.com/A6033180-002e-43c2-b298-8782ae72cffc65535.js','script','ire',document,window); ire('identify', {customerid: '' /*INSERT CUSTOMER ID*/, customeremail: '' /*INSERT SHA1 HASHED CUSTOMER EMAIL*/}); </script>

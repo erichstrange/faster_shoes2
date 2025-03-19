@@ -13,25 +13,16 @@ const Home = () => {
   const featuredProducts = products.slice(0, 3);
 
   useEffect(() => {
-    // Ensure dataLayer array
+    // We still use dataLayer for any page-level events
     window.dataLayer = window.dataLayer || [];
 
-    // ADDED: Generate/store a "customerId" if none is stored yet
-    const existingID = localStorage.getItem('customerId');
-    if (!existingID) {
-      // Simple random ID or replace with your actual logic
-      const newID = 'cust-' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('customerId', newID);
-      console.log('Set new customerId:', newID);
-    }
-
-    // UTT Landing Page event
+    // Fire a "UTT_LandingPageView" for analytics
     window.dataLayer.push({
       event: 'UTT_LandingPageView',
       page: 'HomePage',
     });
 
-    // Identity event (with empty strings or placeholders)
+    // Possibly push an "identity" event (if desired)
     window.dataLayer.push({
       event: 'identity',
       customerID: '',
@@ -121,7 +112,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* NEW: Test link to Checkout Success page with a sample irclickid */}
+        {/* Test link to Checkout Success with sample irclickid */}
         <div className="text-center my-8">
           <Link
               to="/checkoutSuccess?irclickid=test123"
