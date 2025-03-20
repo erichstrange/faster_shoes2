@@ -8,7 +8,7 @@ import {
     Routes,
     Route,
     Navigate,
-    useLocation
+    useLocation,
 } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -43,12 +43,20 @@ export default App;
 function AppRoutes() {
     const location = useLocation();
 
-    // Capture ?irclickid on any route
     useEffect(() => {
         const params = new URLSearchParams(location.search);
+
+        // 1) If we see a new affiliate click: ?irclickid=XYZ
         const cid = params.get('irclickid');
         if (cid) {
             localStorage.setItem('irclickid', cid);
+        }
+
+        // 2) If we see a paid channel param: ?utm_source=google (or facebook, etc.)
+        //    remove any old affiliate click ID so we can credit the paid channel.
+        const utmSource = params.get('utm_source');
+        if (utmSource) {
+            localStorage.removeItem('irclickid');
         }
     }, [location]);
 

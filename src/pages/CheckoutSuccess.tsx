@@ -1,3 +1,7 @@
+/**
+ * File Name: CheckoutSuccess.tsx
+ * Full Path: /Users/mac/WebstormProjects/faster_shoes2/src/pages/CheckoutSuccess.tsx
+ */
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Check } from 'lucide-react';
@@ -9,14 +13,14 @@ const CheckoutSuccess = () => {
     useEffect(() => {
         window.dataLayer = window.dataLayer || [];
 
-        // Grab clickId from query or localStorage
+        // Grab ?irclickid from the URL (if present)
         const searchParams = new URLSearchParams(location.search);
         let irclickid = searchParams.get('irclickid') || '';
-        if (!irclickid) {
-            irclickid = localStorage.getItem('irclickid') || '';
-        }
 
-        // Retrieve the order data
+        // NOTE: We do NOT fall back to localStorage anymore.
+        // If we truly want no affiliate, we'll trust no leftover clickid if none is in the URL.
+
+        // Retrieve the order data from localStorage
         const storedSummary = localStorage.getItem('orderSummary');
         let realOrderId = 'test-order';
         let realTotalValue = '0.00';
@@ -35,26 +39,24 @@ const CheckoutSuccess = () => {
             }
         }
 
-        // 1) Retrieve customerid from localStorage
+        // Retrieve customerid from localStorage
         const realCustomerId = localStorage.getItem('customerId') || '';
 
-        // 2) Fire the parent event with "customerid"
+        // Fire the parent event with clickId if it exists, else empty
         const parentObj = {
             event: 'impactConversion',
             orderId: realOrderId,
-            clickId: irclickid,
+            clickId: irclickid, // Might be empty if none was in URL
             totalValue: realTotalValue,
             currency: 'USD',
-
-            // Must include the same "customerid"
-            customerid: realCustomerId,
+            customerid: realCustomerId, // linking to this customer
         };
         console.log('Pushing parent event:', parentObj);
         window.dataLayer.push(parentObj);
 
     }, [location.search]);
 
-    // 3) Handler for the child event—same "customerid"
+    // Handler for the Child event (same "customerid", no new click)
     const handleChildEvent = () => {
         const realCustomerId = localStorage.getItem('customerId') || '';
         const storedSummary = localStorage.getItem('orderSummary');
@@ -71,18 +73,14 @@ const CheckoutSuccess = () => {
             }
         }
 
-        // We re-use "orderId" so GTM can use DLV – orderId
         const childObj = {
             event: 'impactConversionChild',
             orderId: realOrderId,
             totalValue: '0.00',
             currency: 'USD',
-
-            // Same "customerid" so it persists from parent → child
             customerid: realCustomerId,
         };
         console.log('Pushing child event:', childObj);
-
         window.dataLayer.push(childObj);
     };
 
