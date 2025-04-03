@@ -17,9 +17,6 @@ const CheckoutSuccess = () => {
         const searchParams = new URLSearchParams(location.search);
         let irclickid = searchParams.get('irclickid') || '';
 
-        // NOTE: We do NOT fall back to localStorage anymore.
-        // If we truly want no affiliate, we'll trust no leftover clickid if none is in the URL.
-
         // Retrieve the order data from localStorage
         const storedSummary = localStorage.getItem('orderSummary');
         let realOrderId = 'test-order';
@@ -39,24 +36,25 @@ const CheckoutSuccess = () => {
             }
         }
 
-        // Retrieve customerid from localStorage
+        // Retrieve customerId from localStorage
         const realCustomerId = localStorage.getItem('customerId') || '';
 
         // Fire the parent event with clickId if it exists, else empty
         const parentObj = {
             event: 'impactConversion',
             orderId: realOrderId,
-            clickId: irclickid, // Might be empty if none was in URL
+            clickId: irclickid || '', // Might be empty if none was in URL
             totalValue: realTotalValue,
             currency: 'USD',
-            customerid: realCustomerId, // linking to this customer
+            // IMPORTANT: match the field name from the "identity" event
+            customerID: realCustomerId || '',
         };
         console.log('Pushing parent event:', parentObj);
         window.dataLayer.push(parentObj);
 
     }, [location.search]);
 
-    // Handler for the Child event (same "customerid", no new click)
+    // Handler for the Child event (same "customerID" fix)
     const handleChildEvent = () => {
         const realCustomerId = localStorage.getItem('customerId') || '';
         const storedSummary = localStorage.getItem('orderSummary');
@@ -78,7 +76,7 @@ const CheckoutSuccess = () => {
             orderId: realOrderId,
             totalValue: '0.00',
             currency: 'USD',
-            customerid: realCustomerId,
+            customerID: realCustomerId || '',
         };
         console.log('Pushing child event:', childObj);
         window.dataLayer.push(childObj);
